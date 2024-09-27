@@ -10,6 +10,9 @@ pub use initialize_fee_extension::*;
 pub mod initialize_lock_extension;
 pub use initialize_lock_extension::*;
 
+pub mod initialize_share_extension;
+pub use initialize_share_extension::*;
+
 pub mod initialize_vault;
 pub use initialize_vault::*;
 

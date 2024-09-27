@@ -9,3 +9,6 @@ pub use fee::*;
 
 pub mod lock;
 pub use lock::*;
+
+pub mod share;
+pub use share::*;

@@ -49,4 +49,8 @@ pub mod vaultplex {
     pub fn initialize_fee_extension(ctx: Context<InitializeFeeExtension>, fee_authority: Pubkey, fee_collector: Pubkey, deposit_fee_basis_points: u16, max_deposit_fee: u64) -> Result<()> {
         ctx.accounts.initialize_fee_extension(fee_authority, fee_collector, deposit_fee_basis_points, max_deposit_fee, &ctx.bumps)
     }
+
+    pub fn initialize_share_extension(ctx: Context<InitializeShareExtension>, mint_amount: u64) -> Result<()> {
+        ctx.accounts.initialize_share_extension(mint_amount)
+    }
 }

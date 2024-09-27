@@ -16,7 +16,10 @@ pub const ACCESS_CONTROL_EXTENSION_SIZE: usize = 33;
 pub const FEE_EXTENSION_OFFSET: usize = 94;
 pub const FEE_EXTENSION_SIZE: usize = 48;
 
-pub const TOTAL_EXTENSION_SIZE: usize = FEE_EXTENSION_OFFSET + FEE_EXTENSION_SIZE;
+pub const SHARE_EXTENSION_OFFSET: usize = 143;
+pub const SHARE_EXTENSION_SIZE: usize = 33;
+
+pub const TOTAL_EXTENSION_SIZE: usize = SHARE_EXTENSION_OFFSET + SHARE_EXTENSION_SIZE;
 
 pub const VAULT_CONFIG_BASE_SIZE: usize = 50; // Account discriminator (8) + authority (32) + seed (8) + bump (1) + vault_bump (1)
 

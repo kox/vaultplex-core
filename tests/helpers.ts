@@ -9,6 +9,8 @@ import { assert } from "chai";
 import { DepositPeriodExtension } from "./DepositPeriodExtension";
 import { AccessControlExtension, AccessControlType } from "./AccessControlExtension";
 import { FeeExtension } from "./FeeExtension";
+import { ShareExtension } from "./ShareExtension";
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
 
 // Anchor setup
@@ -254,4 +256,41 @@ export const assertFeeExtension = (vaultAccountData: any, feeAuthority: PublicKe
     assert.equal(extension.feeAuthority.toString(), feeAuthority.toString());
     assert.equal(extension.depositFeeBasisPoints, depositFeeBasisPoints);
     assert.equal(extension.maxDepositFee, maxDepositFee);
+};
+
+
+export const initializeShareExtension = async (
+    user: Keypair, 
+    vaultConfig: PublicKey, 
+    mintAmount: anchor.BN,
+) => {
+
+    const tx = await program.methods
+        .initializeShareExtension(mintAmount)
+        .accounts({
+            authority: user.publicKey,
+            vaultConfig,
+            tokenProgram: TOKEN_PROGRAM_ID,
+            associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        })
+        .signers([user])
+        .rpc()
+        .then(confirmTx)
+        .then(logTx);
+
+    const vaultAccountData = await program.account.vaultConfig.fetch(vaultConfig);
+    return vaultAccountData;
+};
+ 
+export const assertShareExtension = (vaultAccountData: any, mintAmount: anchor.BN) => {
+    const extensionsData = vaultAccountData.extensions as unknown as Buffer;
+    const extensionOffset = 143;
+    const extensionSize = 33;
+    const extensionDataSliced = extensionsData.slice(
+        extensionOffset,
+        extensionOffset + extensionSize
+    );
+    const extension = ShareExtension.fromBuffer(extensionDataSliced);
+    assert.equal(extension.isInitialized, true);    
+    assert.isOk(extension.vaultTokenMint.toString().length);    
 };

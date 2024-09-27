@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program::{transfer, Transfer};
+use anchor_spl::associated_token::AssociatedToken;
+use anchor_spl::token_interface::{Mint as MintInterface, TokenAccount as TokenAccountInterface, TokenInterface};
 
 use crate::error::VaultError;
 use crate::{state::*, LockExtension};
@@ -31,7 +33,30 @@ pub struct DepositSol<'info> {
     )]
     pub fee_treasury: Option<Account<'info, TreasuryData>>,
 
+    #[account(
+        seeds=[
+            b"share_mint", 
+            vault_config.key().as_ref()
+        ],
+        bump,
+        /* mint::decimals = 9,
+        mint::authority = vault_config,
+        mint::freeze_authority = vault_config,
+        mint::token_program = token_program, */
+    )]
+    vshares_mint: Option<InterfaceAccount<'info, MintInterface>>,
+
+    #[account(
+        init_if_needed,
+        payer = user,
+        associated_token::mint = vshares_mint,
+        associated_token::authority = vault_config,
+    )]
+    pub user_ata: Option<InterfaceAccount<'info, TokenAccountInterface>>,
+
     pub system_program: Program<'info, System>,
+    pub token_program: Interface<'info, TokenInterface>, // Token Interface (for both SPL and SPL2022)
+    pub associated_token_program: Program<'info, AssociatedToken>,
 }
 
 impl<'info> DepositSol<'info> {
